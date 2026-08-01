@@ -431,6 +431,10 @@
       accent: "var(--accent-trig)",
       accentBg: "rgba(255,138,92,0.1)",
       questions: [
+        {
+          q: "If $A = \\dfrac{\\sin 3°}{\\cos 9°}$, $B = \\dfrac{\\sin 6°}{\\cos 18°}$ and $C = \\dfrac{\\sin 9°}{\\cos 27°}$, and $D = \\tan 9° \\cos 6° - \\sin 6°$, $E = \\tan 18° \\cos 12° - \\sin 12°$, and $F = \\tan 27° \\cos 18° - \\sin 18°$, then find the value of $\\dfrac{A}{D} + \\dfrac{B}{E} + \\dfrac{C}{F}$.",
+          a: "Each pair (A,D), (B,E), (C,F) follows the identity $\\frac{\\sin x}{\\cos 3x} \\div (\\tan 3x \\cos 2x - \\sin 2x) = 1$, so $A/D = B/E = C/F = 1$, giving a total of $3$.",
+          difficulty: "hard"}, 
         { q: "Prove the identity: sin(A+B)·sin(A−B) = sin²A − sin²B.", a: "Expand both products using sum/difference formulas, then use sin²+cos²=1 to simplify. The cos²B·sin²A and sin²B·cos²A terms combine to give sin²A − sin²B.", difficulty: "medium" },
         { q: "If tanθ = 3/4 and θ is in the third quadrant, find sinθ and cosθ.", a: "In Q3, both sin and cos are negative. With the 3-4-5 triangle: sinθ = −3/5, cosθ = −4/5.", difficulty: "easy" },
         { q: "Solve for x in [0, 2π): 2sin²x − sinx − 1 = 0.", a: "Factor: (2sinx + 1)(sinx − 1) = 0, so sinx = −1/2 or sinx = 1. Solutions: x = π/2, 7π/6, 11π/6.", difficulty: "medium" },
