@@ -154,6 +154,26 @@ function renderMath(container) {
   }
 }
 
+function renderSkeleton(container, count) {
+  const list = document.createElement('div');
+  list.className = 'skeleton-list';
+  for (let i = 0; i < count; i++) {
+    const row = document.createElement('div');
+    row.className = 'skeleton-item';
+    row.innerHTML = `
+      <div class="skeleton-index"></div>
+      <div class="skeleton-lines">
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line"></div>
+        <div class="skeleton-tag"></div>
+      </div>
+    `;
+    list.appendChild(row);
+  }
+  container.innerHTML = '';
+  container.appendChild(list);
+}
+
 // ============================================================
 // SINGLE-TOPIC PAGE LOGIC
 // Call initTopicPage("trigonometry") from that page's inline script.
@@ -185,7 +205,7 @@ function initTopicPage(topicKey) {
     renderMath(main);
   }
 
-  main.innerHTML = '<div class="empty-state">Loading questions…</div>';
+  renderSkeleton(main, 5);
 
   waitForLibs(() => {
     loadData().then(data => {
@@ -227,6 +247,14 @@ function initTopicPage(topicKey) {
 // ============================================================
 function initLandingPage() {
   const grid = document.getElementById('topicGrid');
+
+  grid.innerHTML = Object.keys(TOPICS).map(() => `
+    <div class="skeleton-card">
+      <div class="skeleton-circle"></div>
+      <div class="skeleton-line"></div>
+      <div class="skeleton-line"></div>
+    </div>
+  `).join('');
 
   waitForLibs(() => {
     loadData().then(data => {
