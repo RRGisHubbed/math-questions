@@ -10,6 +10,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <style>
   :root {
     --bg: #0a0a0b;
@@ -417,47 +418,106 @@
 <footer>problemset — built for practice, not perfection.</footer>
 
 <script>
-  // ---------- DATA ----------
-  // Add new questions here. difficulty: "easy" | "medium" | "hard"
-  const data = {
-    "number-theory": {
+  // ---------- CONFIG ----------
+  // Paste your published Google Sheet CSV link here.
+  const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRFvuUAIJ9sPxu4uKkmBmP3GMlyRKhnYbp_L6wu7FtvI9R5SQiPfQz-kOUMTCPxhD6nXdyvER9mfTsa/pub?gid=1277823553&single=true&output=csv";
+
+  const TOPICS = {
+    "Number Theory": {
+      key: "number-theory",
       label: "Number Theory",
       icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9 12h6M12 9v6"/></svg>',
       accent: "var(--accent-nt)",
-      accentBg: "rgba(108,143,255,0.1)",
-      questions: [
-        { q: "Find all positive integers $n$ such that $n^2 + 1$ is divisible by $n + 1$.", a: "$n = 1$. Since $n^2+1 = (n+1)(n-1) + 2$, we need $(n+1) \\mid 2$, so $n+1 \\in \\{1,2\\}$, giving $n = 1$.", difficulty: "medium" },
-        { q: "Prove that the product of any three consecutive integers is divisible by 6.", a: "Among 3 consecutive integers, at least one is divisible by 2 and exactly one by 3 (since every 3rd integer is a multiple of 3). So the product is divisible by 2·3 = 6.", difficulty: "easy" },
-        { q: "What is the remainder when $7^{100}$ is divided by 5?", a: "$7 \\equiv 2 \\pmod 5$. $2^{100} = (2^4)^{25} \\equiv 1^{25} = 1 \\pmod 5$. Remainder is $1$.", difficulty: "medium" },
-        { q: "Find the greatest common divisor of 4620 and 3960.", a: "gcd(4620, 3960) = 660, found via the Euclidean algorithm: 4620 = 1×3960 + 660; 3960 = 6×660 + 0.", difficulty: "easy" },
-        { q: "Show that there are infinitely many primes of the form 4k + 3.", a: "Assume finitely many: p1,…,pn. Consider N = 4·p1·p2·…·pn − 1. N is of form 4k+3 and not divisible by any pi, so it has a prime factor of form 4k+3 not in the list — contradiction.", difficulty: "hard" },
-        { q: "Find all integer solutions to $x^2 - y^2 = 45$.", a: "$(x-y)(x+y) = 45$. Factor pairs of 45 with matching parity give $(x,y) = (23,22), (9,6), (7,2)$, and their sign variants.", difficulty: "hard" },
-        { q: "Determine whether $2^{11} - 1$ is prime.", a: "$2^{11} - 1 = 2047 = 23 \\times 89$. Not prime.", difficulty: "easy" },
-        { q: "Find the smallest positive integer $n$ such that $n!$ is divisible by $10^6$.", a: "Need at least 6 factors of 5 in $n!$. Using Legendre's formula, $n = 25$ gives exactly 6 factors of 5 (and plenty of 2s), so $n = 25$.", difficulty: "medium" }
-      ]
+      accentBg: "rgba(108,143,255,0.1)"
     },
-    "trigonometry": {
+    "Trigonometry": {
+      key: "trigonometry",
       label: "Trigonometry",
       icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18c3-9 6-9 9 0s6 9 9 0"/></svg>',
       accent: "var(--accent-trig)",
-      accentBg: "rgba(255,138,92,0.1)",
-      questions: [
-        { q: "Prove the identity: $\\sin(A+B) \\cdot \\sin(A-B) = \\sin^2 A - \\sin^2 B$.", a: "Expand both products using sum/difference formulas, then use $\\sin^2 + \\cos^2 = 1$ to simplify. The $\\cos^2 B \\sin^2 A$ and $\\sin^2 B \\cos^2 A$ terms combine to give $\\sin^2 A - \\sin^2 B$.", difficulty: "medium" },
-        { q: "If tanθ = 3/4 and θ is in the third quadrant, find sinθ and cosθ.", a: "In Q3, both sin and cos are negative. With the 3-4-5 triangle: sinθ = −3/5, cosθ = −4/5.", difficulty: "easy" },
-        { q: "Solve for $x$ in $[0, 2\\pi)$: $2\\sin^2 x - \\sin x - 1 = 0$.", a: "Factor: $(2\\sin x + 1)(\\sin x - 1) = 0$, so $\\sin x = -1/2$ or $\\sin x = 1$. Solutions: $x = \\pi/2, 7\\pi/6, 11\\pi/6$.", difficulty: "medium" },
-        { q: "Find the general solution of cos(3θ) = cos(θ).", a: "cos(3θ) − cos(θ) = 0 → −2sin(2θ)sin(θ) = 0. So θ = nπ/2 or θ = nπ, combined: θ = nπ/2 for integer n (excluding overlaps).", difficulty: "hard" },
-        { q: "A ladder leans against a wall making a $60°$ angle with the ground. If the base is 4m from the wall, how long is the ladder?", a: "$\\cos(60°) = 4/L \\Rightarrow L = 4 / 0.5 = 8$ meters.", difficulty: "easy", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Right_triangle_example.svg/240px-Right_triangle_example.svg.png" },
-        { q: "Prove: $\\dfrac{1 - \\cos 2\\theta}{\\sin 2\\theta} = \\tan\\theta$.", a: "Using $1-\\cos 2\\theta = 2\\sin^2\\theta$ and $\\sin 2\\theta = 2\\sin\\theta\\cos\\theta$: $\\dfrac{2\\sin^2\\theta}{2\\sin\\theta\\cos\\theta} = \\dfrac{\\sin\\theta}{\\cos\\theta} = \\tan\\theta$.", difficulty: "medium" },
-        { q: "Find the maximum value of $3\\sin x + 4\\cos x$.", a: "Maximum of $a\\sin x + b\\cos x$ is $\\sqrt{a^2+b^2} = \\sqrt{9+16} = 5$.", difficulty: "easy" },
-        { q: "Express tan(π/4 + θ) in terms of tanθ using the addition formula.", a: "Using the tangent addition formula: tan(π/4+θ) = (1+tanθ)/(1−tanθ).", difficulty: "hard" }
-      ]
+      accentBg: "rgba(255,138,92,0.1)"
     }
   };
 
-  // ---------- RENDER ----------
+  // Normalize whatever difficulty text was typed in the form into easy/medium/hard
+  function normalizeDifficulty(raw) {
+    const d = (raw || "").trim().toLowerCase();
+    if (["easy", "beginner", "basic"].includes(d)) return "easy";
+    if (["hard", "advanced", "difficult"].includes(d)) return "hard";
+    return "medium"; // covers "medium", "moderate", blank, or anything else
+  }
+
+  // Convert a Google Drive "open?id=" share link into a directly-embeddable image URL
+  function normalizeImageUrl(url) {
+    if (!url) return null;
+    const match = url.match(/[-\w]{25,}/); // grabs the Drive file ID
+    if (url.includes("drive.google.com") && match) {
+      return `https://drive.google.com/uc?export=view&id=${match[0]}`;
+    }
+    return url; // already a direct link (e.g. imgur)
+  }
+
+  // Wrap raw LaTeX (no $ delimiters) in $$...$$ if the form entry looks like pure LaTeX.
+  // If the text already contains $ signs, leave it alone (author added their own delimiters).
+  function autoWrapLatex(text) {
+    if (!text) return text;
+    if (text.includes("$")) return text;
+    const looksLikeLatex = /\\[a-zA-Z]+|\^|_|\\frac|\\sin|\\cos|\\tan/.test(text);
+    return looksLikeLatex ? `$$${text}$$` : text;
+  }
+
+  function buildDataFromRows(rows) {
+    const data = {};
+    Object.values(TOPICS).forEach(t => {
+      data[t.key] = { label: t.label, icon: t.icon, accent: t.accent, accentBg: t.accentBg, questions: [] };
+    });
+
+    rows.forEach(row => {
+      const topicName = (row["Topic"] || "").trim();
+      const topic = TOPICS[topicName];
+      if (!topic || !row["Question"]) return;
+
+      data[topic.key].questions.push({
+        q: autoWrapLatex((row["Question"] || "").trim()),
+        a: autoWrapLatex((row["Answer"] || "").trim()) || "No solution provided yet.",
+        difficulty: normalizeDifficulty(row["Difficulty"]),
+        img: normalizeImageUrl((row["Image"] || "").trim())
+      });
+    });
+
+    return data;
+  }
+
+  // ---------- STATE ----------
+  let data = {};
   const main = document.getElementById('main');
   let currentFilter = 'all';
   let currentSearch = '';
+
+  async function loadQuestions() {
+    main.innerHTML = '<div class="empty-state">Loading questions…</div>';
+    try {
+      const res = await fetch(SHEET_CSV_URL, { cache: "no-store" });
+      const csvText = await res.text();
+      const parsed = Papa.parse(csvText, { header: true, skipEmptyLines: true });
+      data = buildDataFromRows(parsed.data);
+    } catch (err) {
+      console.error("Failed to load questions from sheet:", err);
+      main.innerHTML = '<div class="empty-state">Could not load questions right now. Check back shortly.</div>';
+      return;
+    }
+    updateStats();
+    render();
+  }
+
+  function updateStats() {
+    const ntCount = data['number-theory'] ? data['number-theory'].questions.length : 0;
+    const trigCount = data['trigonometry'] ? data['trigonometry'].questions.length : 0;
+    document.getElementById('stat-total').textContent = ntCount + trigCount;
+    document.getElementById('stat-nt').textContent = ntCount;
+    document.getElementById('stat-trig').textContent = trigCount;
+  }
+
 
   function render() {
     main.innerHTML = '';
@@ -524,12 +584,6 @@
     }
   }
 
-  // ---------- STATS ----------
-  document.getElementById('stat-total').textContent =
-    data['number-theory'].questions.length + data['trigonometry'].questions.length;
-  document.getElementById('stat-nt').textContent = data['number-theory'].questions.length;
-  document.getElementById('stat-trig').textContent = data['trigonometry'].questions.length;
-
   // ---------- EVENTS ----------
   document.getElementById('searchInput').addEventListener('input', (e) => {
     currentSearch = e.target.value;
@@ -545,8 +599,16 @@
     });
   });
 
-  window.addEventListener('DOMContentLoaded', render);
-  if (document.readyState !== 'loading') render();
+  // ---------- INIT ----------
+  function init() {
+    if (window.Papa) {
+      loadQuestions();
+    } else {
+      setTimeout(init, 50); // wait for PapaParse to finish loading
+    }
+  }
+  if (document.readyState !== 'loading') init();
+  else window.addEventListener('DOMContentLoaded', init);
 </script>
 
 </body>
