@@ -435,6 +435,33 @@ main { max-width: 1040px; margin: 0 auto; padding: 8px 32px 100px; }
 }
 .skeleton-index { animation: skeleton-pulse 1.4s ease-in-out infinite; }
 
+/* ---------- CUSTOM CURSOR ---------- */
+@media (pointer: fine) {
+  body { cursor: none; }
+  a, button, .q-item, .topic-card, .pill { cursor: none; }
+}
+.cursor-glow {
+  position: fixed;
+  top: 0; left: 0;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow:
+    0 0 8px 2px rgba(255,255,255,0.9),
+    0 0 20px 6px rgba(255,255,255,0.35),
+    0 0 36px 12px rgba(255,255,255,0.12);
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: width 0.15s ease, height 0.15s ease, opacity 0.15s ease;
+  opacity: 0;
+}
+.cursor-glow.visible { opacity: 1; }
+.cursor-glow.cursor-hover {
+  width: 22px;
+  height: 22px;
+}
+
 @keyframes skeleton-pulse {
   0%, 100% { opacity: 0.5; }
   50% { opacity: 1; }
