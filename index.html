@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Problem Set — Math Practice by Topic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+
+<nav>
+  <div class="logo-group">
+    <div class="logo">
+      <span class="logo-mark">∑</span>
+      problemset
+    </div>
+    <span class="signature">Madhup</span>
+  </div>
+  <div class="nav-links">
+    <a href="number-theory.html">Number Theory</a>
+    <a href="trigonometry.html">Trigonometry</a>
+    <a href="calculus.html">Calculus</a>
+    <a href="combinatorics.html">Combinatorics</a>
+    <a href="algebra.html">Algebra</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <svg class="hero-canvas" viewBox="0 0 480 480" fill="none">
+    <path d="M0 340 Q 60 260, 120 340 T 240 340 T 360 340 T 480 340" stroke="#ff8a5c" stroke-width="1.5" opacity="0.4"/>
+    <path d="M0 300 Q 60 180, 120 300 T 240 300 T 360 300 T 480 300" stroke="#6c8fff" stroke-width="1.5" opacity="0.35"/>
+    <g fill="#6c8fff" opacity="0.5" font-family="JetBrains Mono" font-size="13">
+      <text x="20" y="60">2</text>
+      <text x="70" y="90">3</text>
+      <text x="140" y="50">5</text>
+      <text x="200" y="110">7</text>
+      <text x="260" y="70">11</text>
+      <text x="320" y="130">13</text>
+      <text x="380" y="55">17</text>
+      <text x="30" y="150">19</text>
+      <text x="410" y="160">23</text>
+    </g>
+  </svg>
+
+  <div class="eyebrow">HANDCRAFTED PROBLEM SET</div>
+  <h1>Practice problems, <span class="accent">sorted by topic.</span></h1>
+  <p>A curated set of math questions across number theory, trigonometry, calculus, combinatorics, and algebra — built for focused practice, not endless scrolling.</p>
+
+  <div class="hero-stats">
+    <div>
+      <div class="stat-num" id="stat-total">0</div>
+      <div class="stat-label">questions</div>
+    </div>
+    <div>
+      <div class="stat-num" id="stat-topics">5</div>
+      <div class="stat-label">topics</div>
+    </div>
+  </div>
+</div>
+
+<div class="topic-grid" id="topicGrid">
+  <div class="empty-state">Loading topics…</div>
+</div>
+
+<footer>problemset — built for practice, not perfection.</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="assets/app.js"></script>
+<script>
+  initLandingPage();
+</script>
+
+</body>
+</html>
