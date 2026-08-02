@@ -25,7 +25,7 @@ const TOPICS = {
     key: "calculus",
     label: "Calculus",
     tagline: "Limits, derivatives, integrals.",
-    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 4c-3 0-4 3-4 7s-1 9-4 9M9 4c3 0 4 3 4 7"/></svg>',
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 4.5c-1.5 0-2.5 1-2.8 2.5l-2.4 12c-.3 1.5-1.3 2.5-2.8 2.5"/><path d="M8 4.5h1.5M16.5 19.5H18"/></svg>',
     accent: "var(--accent-calc)",
     accentBg: "rgba(126,224,140,0.1)"
   },
@@ -256,4 +256,3 @@ function initLandingPage() {
     });
   });
 }
-
