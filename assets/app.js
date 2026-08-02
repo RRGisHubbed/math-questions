@@ -1,1 +1,259 @@
+// ============================================================
+// CONFIG — edit these to change data source or topics
+// ============================================================
+const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRFvuUAIJ9sPxu4uKkmBmP3GMlyRKhnYbp_L6wu7FtvI9R5SQiPfQz-kOUMTCPxhD6nXdyvER9mfTsa/pub?gid=1277823553&single=true&output=csv";
+const SHOW_IMAGES = false; // set to true to bring images back
+
+const TOPICS = {
+  "Number Theory": {
+    key: "number-theory",
+    label: "Number Theory",
+    tagline: "Primes, divisibility, modular arithmetic.",
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9 12h6M12 9v6"/></svg>',
+    accent: "var(--accent-nt)",
+    accentBg: "rgba(108,143,255,0.1)"
+  },
+  "Trigonometry": {
+    key: "trigonometry",
+    label: "Trigonometry",
+    tagline: "Identities, equations, angle relationships.",
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18c3-9 6-9 9 0s6 9 9 0"/></svg>',
+    accent: "var(--accent-trig)",
+    accentBg: "rgba(255,138,92,0.1)"
+  },
+  "Calculus": {
+    key: "calculus",
+    label: "Calculus",
+    tagline: "Limits, derivatives, integrals.",
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 4c-3 0-4 3-4 7s-1 9-4 9M9 4c3 0 4 3 4 7"/></svg>',
+    accent: "var(--accent-calc)",
+    accentBg: "rgba(126,224,140,0.1)"
+  },
+  "Combinatorics": {
+    key: "combinatorics",
+    label: "Combinatorics",
+    tagline: "Counting, permutations, graph problems.",
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8 7l8 0M6 8.5v7M18 8.5v7M8 17l8 0"/></svg>',
+    accent: "var(--accent-comb)",
+    accentBg: "rgba(214,138,255,0.1)"
+  },
+  "Algebra": {
+    key: "algebra",
+    label: "Algebra",
+    tagline: "Equations, inequalities, functions.",
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h5l-4 10h5M14 7h6M14 12h6M14 17h6"/></svg>',
+    accent: "var(--accent-alg)",
+    accentBg: "rgba(255,209,102,0.1)"
+  }
+};
+
+// ============================================================
+// DATA HELPERS
+// ============================================================
+function normalizeDifficulty(raw) {
+  const d = (raw || "").trim().toLowerCase();
+  if (["easy", "beginner", "basic"].includes(d)) return "easy";
+  if (["hard", "advanced", "difficult"].includes(d)) return "hard";
+  return "medium";
+}
+
+function normalizeImageUrl(url) {
+  if (!url) return null;
+  const match = url.match(/[-\w]{25,}/);
+  if (url.includes("drive.google.com") && match) {
+    return `https://drive.google.com/thumbnail?id=${match[0]}&sz=w1000`;
+  }
+  return url;
+}
+
+function autoWrapLatex(text) {
+  if (!text) return text;
+  if (text.includes("$")) return text;
+  const looksLikeLatex = /\\[a-zA-Z]+|\^|_|\\frac|\\sin|\\cos|\\tan/.test(text);
+  return looksLikeLatex ? `$$${text}$$` : text;
+}
+
+function buildDataFromRows(rows) {
+  const data = {};
+  Object.values(TOPICS).forEach(t => {
+    data[t.key] = { label: t.label, icon: t.icon, accent: t.accent, accentBg: t.accentBg, questions: [] };
+  });
+
+  rows.forEach(row => {
+    const topicName = (row["Topic"] || "").trim();
+    const topic = TOPICS[topicName];
+    if (!topic || !row["Question"]) return;
+
+    data[topic.key].questions.push({
+      q: autoWrapLatex((row["Question"] || "").trim()),
+      a: autoWrapLatex((row["Answer"] || "").trim()) || "No solution provided yet.",
+      difficulty: normalizeDifficulty(row["Difficulty"]),
+      img: normalizeImageUrl((row["Image"] || "").trim()),
+      solutionLink: (row["Solution Link"] || "").trim()
+    });
+  });
+
+  return data;
+}
+
+async function loadData() {
+  const res = await fetch(SHEET_CSV_URL, { cache: "no-store" });
+  const csvText = await res.text();
+  const parsed = Papa.parse(csvText, { header: true, skipEmptyLines: true });
+  return buildDataFromRows(parsed.data);
+}
+
+function waitForLibs(callback) {
+  if (window.Papa) callback();
+  else setTimeout(() => waitForLibs(callback), 50);
+}
+
+// ============================================================
+// SHARED QUESTION RENDERING (used by every topic page)
+// ============================================================
+function renderQuestionItem(item, index, accent) {
+  const qEl = document.createElement('div');
+  qEl.className = 'q-item';
+  qEl.style.setProperty('--glow', accent);
+  qEl.innerHTML = `
+    <div class="q-row">
+      <span class="q-index">${String(index + 1).padStart(2, '0')}</span>
+      <div class="q-body">
+        <div class="q-text">${item.q}</div>
+        ${(SHOW_IMAGES && item.img) ? (
+          item.solutionLink
+            ? `<img class="q-image q-image-linked" src="${item.img}" alt="question diagram" onerror="this.style.display='none'" onclick="event.stopPropagation(); window.open('${item.solutionLink}', '_blank')">`
+            : `<img class="q-image" src="${item.img}" alt="question diagram" onerror="this.style.display='none'">`
+        ) : ''}
+        <div class="q-meta"><span class="tag tag-${item.difficulty}">${item.difficulty}</span></div>
+        <div class="q-answer"><div class="q-answer-inner"><span class="label">SOLUTION</span>${item.a}</div></div>
+      </div>
+      <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      ${item.solutionLink ? `<svg class="link-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg>` : ''}
+    </div>
+  `;
+  qEl.addEventListener('click', () => {
+    if (item.solutionLink) {
+      window.open(item.solutionLink, '_blank');
+    } else {
+      qEl.classList.toggle('open');
+    }
+  });
+  if (item.solutionLink) qEl.classList.add('has-link');
+  return qEl;
+}
+
+function renderMath(container) {
+  if (window.renderMathInElement) {
+    renderMathInElement(container, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false }
+      ]
+    });
+  }
+}
+
+// ============================================================
+// SINGLE-TOPIC PAGE LOGIC
+// Call initTopicPage("trigonometry") from that page's inline script.
+// ============================================================
+function initTopicPage(topicKey) {
+  const main = document.getElementById('main');
+  let allQuestions = [];
+  let accent = 'var(--accent-nt)';
+  let currentFilter = 'all';
+  let currentSearch = '';
+
+  function render() {
+    main.innerHTML = '';
+    const filtered = allQuestions.filter(item => {
+      const matchesFilter = currentFilter === 'all' || item.difficulty === currentFilter;
+      const matchesSearch = item.q.toLowerCase().includes(currentSearch.toLowerCase());
+      return matchesFilter && matchesSearch;
+    });
+
+    if (filtered.length === 0) {
+      main.innerHTML = '<div class="empty-state">No questions match your search.</div>';
+      return;
+    }
+
+    const list = document.createElement('div');
+    list.className = 'question-list';
+    filtered.forEach((item, i) => list.appendChild(renderQuestionItem(item, i, accent)));
+    main.appendChild(list);
+    renderMath(main);
+  }
+
+  main.innerHTML = '<div class="empty-state">Loading questions…</div>';
+
+  waitForLibs(() => {
+    loadData().then(data => {
+      const section = data[topicKey];
+      allQuestions = section ? section.questions : [];
+      accent = section ? section.accent : accent;
+
+      const countEl = document.getElementById('stat-count');
+      if (countEl) countEl.textContent = allQuestions.length;
+
+      render();
+    }).catch(err => {
+      console.error("Failed to load questions:", err);
+      main.innerHTML = '<div class="empty-state">Could not load questions right now. Check back shortly.</div>';
+    });
+  });
+
+  const searchInput = document.getElementById('searchInput');
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      currentSearch = e.target.value;
+      render();
+    });
+  }
+
+  document.querySelectorAll('.pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      currentFilter = pill.dataset.filter;
+      render();
+    });
+  });
+}
+
+// ============================================================
+// LANDING PAGE LOGIC
+// Call initLandingPage() from index.html's inline script.
+// ============================================================
+function initLandingPage() {
+  const grid = document.getElementById('topicGrid');
+
+  waitForLibs(() => {
+    loadData().then(data => {
+      const total = Object.values(data).reduce((sum, s) => sum + s.questions.length, 0);
+      const totalEl = document.getElementById('stat-total');
+      const topicsEl = document.getElementById('stat-topics');
+      if (totalEl) totalEl.textContent = total;
+      if (topicsEl) topicsEl.textContent = Object.keys(TOPICS).length;
+
+      grid.innerHTML = '';
+      Object.values(TOPICS).forEach(topic => {
+        const count = data[topic.key] ? data[topic.key].questions.length : 0;
+        const card = document.createElement('a');
+        card.href = `${topic.key}.html`;
+        card.className = 'topic-card';
+        card.style.setProperty('--card-accent', topic.accent);
+        card.innerHTML = `
+          <div class="topic-icon" style="background:${topic.accentBg}; color:${topic.accent}">${topic.icon}</div>
+          <h3>${topic.label}</h3>
+          <p>${count} question${count !== 1 ? 's' : ''}</p>
+        `;
+        grid.appendChild(card);
+      });
+    }).catch(err => {
+      console.error("Failed to load questions:", err);
+      grid.innerHTML = '<div class="empty-state">Could not load topics right now. Check back shortly.</div>';
+    });
+  });
+}
 
