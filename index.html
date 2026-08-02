@@ -556,7 +556,7 @@
             <span class="q-index">${String(i + 1).padStart(2, '0')}</span>
             <div class="q-body">
               <div class="q-text">${item.q}</div>
-              ${item.img ? `<img class="q-image" src="${item.img}" alt="question diagram">` : ''}
+              ${item.img ? `<img class="q-image" src="${item.img}" alt="question diagram" onerror="this.style.display='none'">` : ''}
               <div class="q-meta"><span class="tag tag-${item.difficulty}">${item.difficulty}</span></div>
               <div class="q-answer"><div class="q-answer-inner"><span class="label">SOLUTION</span>${item.a}</div></div>
             </div>
