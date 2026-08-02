@@ -22,6 +22,9 @@
     --text-faint: #55555c;
     --accent-nt: #6c8fff;   /* number theory — indigo */
     --accent-trig: #ff8a5c; /* trigonometry — amber-coral */
+    --accent-calc: #7ee08c; /* calculus — mint green */
+    --accent-comb: #d68aff; /* combinatorics — violet */
+    --accent-alg: #ffd166;  /* algebra — gold */
     --mono: 'JetBrains Mono', ui-monospace, monospace;
     --sans: 'Inter', -apple-system, sans-serif;
   }
@@ -402,6 +405,9 @@
   <div class="nav-links">
     <a href="#number-theory">Number Theory</a>
     <a href="#trigonometry">Trigonometry</a>
+    <a href="#calculus">Calculus</a>
+    <a href="#combinatorics">Combinatorics</a>
+    <a href="#algebra">Algebra</a>
   </div>
 </nav>
 
@@ -424,7 +430,7 @@
 
   <div class="eyebrow">HANDCRAFTED PROBLEM SET</div>
   <h1>Practice problems, <span class="accent">sorted by topic.</span></h1>
-  <p>A small, curated set of math questions in number theory and trigonometry — built for focused practice, not endless scrolling.</p>
+  <p>A curated set of math questions across number theory, trigonometry, calculus, combinatorics, and algebra — built for focused practice, not endless scrolling.</p>
 
   <div class="hero-stats">
     <div>
@@ -432,12 +438,8 @@
       <div class="stat-label">questions</div>
     </div>
     <div>
-      <div class="stat-num" style="color:var(--accent-nt)" id="stat-nt">0</div>
-      <div class="stat-label">number theory</div>
-    </div>
-    <div>
-      <div class="stat-num" style="color:var(--accent-trig)" id="stat-trig">0</div>
-      <div class="stat-label">trigonometry</div>
+      <div class="stat-num" id="stat-topics">5</div>
+      <div class="stat-label">topics</div>
     </div>
   </div>
 </div>
@@ -481,6 +483,27 @@
       icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18c3-9 6-9 9 0s6 9 9 0"/></svg>',
       accent: "var(--accent-trig)",
       accentBg: "rgba(255,138,92,0.1)"
+    },
+    "Calculus": {
+      key: "calculus",
+      label: "Calculus",
+      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 4c-3 0-4 3-4 7s-1 9-4 9M9 4c3 0 4 3 4 7"/></svg>',
+      accent: "var(--accent-calc)",
+      accentBg: "rgba(126,224,140,0.1)"
+    },
+    "Combinatorics": {
+      key: "combinatorics",
+      label: "Combinatorics",
+      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8 7l8 0M6 8.5v7M18 8.5v7M8 17l8 0"/></svg>',
+      accent: "var(--accent-comb)",
+      accentBg: "rgba(214,138,255,0.1)"
+    },
+    "Algebra": {
+      key: "algebra",
+      label: "Algebra",
+      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h5l-4 10h5M14 7h6M14 12h6M14 17h6"/></svg>',
+      accent: "var(--accent-alg)",
+      accentBg: "rgba(255,209,102,0.1)"
     }
   };
 
@@ -557,11 +580,9 @@
   }
 
   function updateStats() {
-    const ntCount = data['number-theory'] ? data['number-theory'].questions.length : 0;
-    const trigCount = data['trigonometry'] ? data['trigonometry'].questions.length : 0;
-    document.getElementById('stat-total').textContent = ntCount + trigCount;
-    document.getElementById('stat-nt').textContent = ntCount;
-    document.getElementById('stat-trig').textContent = trigCount;
+    const total = Object.values(data).reduce((sum, section) => sum + section.questions.length, 0);
+    document.getElementById('stat-total').textContent = total;
+    document.getElementById('stat-topics').textContent = Object.keys(data).length;
   }
 
 
