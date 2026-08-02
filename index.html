@@ -480,7 +480,7 @@
     if (!url) return null;
     const match = url.match(/[-\w]{25,}/); // grabs the Drive file ID
     if (url.includes("drive.google.com") && match) {
-      return `https://drive.google.com/uc?export=view&id=${match[0]}`;
+      return `https://drive.google.com/thumbnail?id=${match[0]}&sz=w1000`;
     }
     return url; // already a direct link (e.g. imgur)
   }
