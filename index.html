@@ -7,6 +7,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
 <style>
   :root {
     --bg: #0a0a0b;
@@ -261,6 +264,14 @@
   }
   .q-body { flex: 1; }
   .q-text { font-size: 15px; font-weight: 500; line-height: 1.55; }
+  .q-image {
+    max-width: 100%;
+    max-height: 260px;
+    margin-top: 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    display: block;
+  }
   .q-meta { display: flex; gap: 8px; margin-top: 10px; }
   .tag {
     font-family: var(--mono);
@@ -415,14 +426,14 @@
       accent: "var(--accent-nt)",
       accentBg: "rgba(108,143,255,0.1)",
       questions: [
-        { q: "Find all positive integers n such that n² + 1 is divisible by n + 1.", a: "n = 1. Since n²+1 = (n+1)(n−1) + 2, we need (n+1) | 2, so n+1 ∈ {1,2}, giving n = 1.", difficulty: "medium" },
+        { q: "Find all positive integers $n$ such that $n^2 + 1$ is divisible by $n + 1$.", a: "$n = 1$. Since $n^2+1 = (n+1)(n-1) + 2$, we need $(n+1) \\mid 2$, so $n+1 \\in \\{1,2\\}$, giving $n = 1$.", difficulty: "medium" },
         { q: "Prove that the product of any three consecutive integers is divisible by 6.", a: "Among 3 consecutive integers, at least one is divisible by 2 and exactly one by 3 (since every 3rd integer is a multiple of 3). So the product is divisible by 2·3 = 6.", difficulty: "easy" },
-        { q: "What is the remainder when 7^100 is divided by 5?", a: "7 ≡ 2 (mod 5). 2^100 = (2^4)^25 ≡ 1^25 = 1 (mod 5). Remainder is 1.", difficulty: "medium" },
+        { q: "What is the remainder when $7^{100}$ is divided by 5?", a: "$7 \\equiv 2 \\pmod 5$. $2^{100} = (2^4)^{25} \\equiv 1^{25} = 1 \\pmod 5$. Remainder is $1$.", difficulty: "medium" },
         { q: "Find the greatest common divisor of 4620 and 3960.", a: "gcd(4620, 3960) = 660, found via the Euclidean algorithm: 4620 = 1×3960 + 660; 3960 = 6×660 + 0.", difficulty: "easy" },
         { q: "Show that there are infinitely many primes of the form 4k + 3.", a: "Assume finitely many: p1,…,pn. Consider N = 4·p1·p2·…·pn − 1. N is of form 4k+3 and not divisible by any pi, so it has a prime factor of form 4k+3 not in the list — contradiction.", difficulty: "hard" },
-        { q: "Find all integer solutions to x² − y² = 45.", a: "(x−y)(x+y) = 45. Factor pairs of 45 with matching parity give (x,y) = (23,22), (9,6), (7,2), and their sign variants.", difficulty: "hard" },
-        { q: "Determine whether 2^11 − 1 is prime.", a: "2^11 − 1 = 2047 = 23 × 89. Not prime.", difficulty: "easy" },
-        { q: "Find the smallest positive integer n such that n! is divisible by 10^6.", a: "Need at least 6 factors of 5 in n!. Using Legendre's formula, n = 25 gives exactly 6 factors of 5 (and plenty of 2s), so n = 25.", difficulty: "medium" }
+        { q: "Find all integer solutions to $x^2 - y^2 = 45$.", a: "$(x-y)(x+y) = 45$. Factor pairs of 45 with matching parity give $(x,y) = (23,22), (9,6), (7,2)$, and their sign variants.", difficulty: "hard" },
+        { q: "Determine whether $2^{11} - 1$ is prime.", a: "$2^{11} - 1 = 2047 = 23 \\times 89$. Not prime.", difficulty: "easy" },
+        { q: "Find the smallest positive integer $n$ such that $n!$ is divisible by $10^6$.", a: "Need at least 6 factors of 5 in $n!$. Using Legendre's formula, $n = 25$ gives exactly 6 factors of 5 (and plenty of 2s), so $n = 25$.", difficulty: "medium" }
       ]
     },
     "trigonometry": {
@@ -431,17 +442,13 @@
       accent: "var(--accent-trig)",
       accentBg: "rgba(255,138,92,0.1)",
       questions: [
-        {
-          q: "If $A = \\dfrac{\\sin 3°}{\\cos 9°}$, $B = \\dfrac{\\sin 6°}{\\cos 18°}$ and $C = \\dfrac{\\sin 9°}{\\cos 27°}$, and $D = \\tan 9° \\cos 6° - \\sin 6°$, $E = \\tan 18° \\cos 12° - \\sin 12°$, and $F = \\tan 27° \\cos 18° - \\sin 18°$, then find the value of $\\dfrac{A}{D} + \\dfrac{B}{E} + \\dfrac{C}{F}$.",
-          a: "Each pair (A,D), (B,E), (C,F) follows the identity $\\frac{\\sin x}{\\cos 3x} \\div (\\tan 3x \\cos 2x - \\sin 2x) = 1$, so $A/D = B/E = C/F = 1$, giving a total of $3$.",
-          difficulty: "hard"}, 
-        { q: "Prove the identity: sin(A+B)·sin(A−B) = sin²A − sin²B.", a: "Expand both products using sum/difference formulas, then use sin²+cos²=1 to simplify. The cos²B·sin²A and sin²B·cos²A terms combine to give sin²A − sin²B.", difficulty: "medium" },
+        { q: "Prove the identity: $\\sin(A+B) \\cdot \\sin(A-B) = \\sin^2 A - \\sin^2 B$.", a: "Expand both products using sum/difference formulas, then use $\\sin^2 + \\cos^2 = 1$ to simplify. The $\\cos^2 B \\sin^2 A$ and $\\sin^2 B \\cos^2 A$ terms combine to give $\\sin^2 A - \\sin^2 B$.", difficulty: "medium" },
         { q: "If tanθ = 3/4 and θ is in the third quadrant, find sinθ and cosθ.", a: "In Q3, both sin and cos are negative. With the 3-4-5 triangle: sinθ = −3/5, cosθ = −4/5.", difficulty: "easy" },
-        { q: "Solve for x in [0, 2π): 2sin²x − sinx − 1 = 0.", a: "Factor: (2sinx + 1)(sinx − 1) = 0, so sinx = −1/2 or sinx = 1. Solutions: x = π/2, 7π/6, 11π/6.", difficulty: "medium" },
+        { q: "Solve for $x$ in $[0, 2\\pi)$: $2\\sin^2 x - \\sin x - 1 = 0$.", a: "Factor: $(2\\sin x + 1)(\\sin x - 1) = 0$, so $\\sin x = -1/2$ or $\\sin x = 1$. Solutions: $x = \\pi/2, 7\\pi/6, 11\\pi/6$.", difficulty: "medium" },
         { q: "Find the general solution of cos(3θ) = cos(θ).", a: "cos(3θ) − cos(θ) = 0 → −2sin(2θ)sin(θ) = 0. So θ = nπ/2 or θ = nπ, combined: θ = nπ/2 for integer n (excluding overlaps).", difficulty: "hard" },
-        { q: "A ladder leans against a wall making a 60° angle with the ground. If the base is 4m from the wall, how long is the ladder?", a: "cos(60°) = 4/L → L = 4 / 0.5 = 8 meters.", difficulty: "easy" },
-        { q: "Prove: (1 − cos2θ) / sin2θ = tanθ.", a: "Using 1−cos2θ = 2sin²θ and sin2θ = 2sinθcosθ: (2sin²θ)/(2sinθcosθ) = sinθ/cosθ = tanθ.", difficulty: "medium" },
-        { q: "Find the maximum value of 3sinx + 4cosx.", a: "Maximum of a·sinx + b·cosx is √(a²+b²) = √(9+16) = 5.", difficulty: "easy" },
+        { q: "A ladder leans against a wall making a $60°$ angle with the ground. If the base is 4m from the wall, how long is the ladder?", a: "$\\cos(60°) = 4/L \\Rightarrow L = 4 / 0.5 = 8$ meters.", difficulty: "easy", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Right_triangle_example.svg/240px-Right_triangle_example.svg.png" },
+        { q: "Prove: $\\dfrac{1 - \\cos 2\\theta}{\\sin 2\\theta} = \\tan\\theta$.", a: "Using $1-\\cos 2\\theta = 2\\sin^2\\theta$ and $\\sin 2\\theta = 2\\sin\\theta\\cos\\theta$: $\\dfrac{2\\sin^2\\theta}{2\\sin\\theta\\cos\\theta} = \\dfrac{\\sin\\theta}{\\cos\\theta} = \\tan\\theta$.", difficulty: "medium" },
+        { q: "Find the maximum value of $3\\sin x + 4\\cos x$.", a: "Maximum of $a\\sin x + b\\cos x$ is $\\sqrt{a^2+b^2} = \\sqrt{9+16} = 5$.", difficulty: "easy" },
         { q: "Express tan(π/4 + θ) in terms of tanθ using the addition formula.", a: "Using the tangent addition formula: tan(π/4+θ) = (1+tanθ)/(1−tanθ).", difficulty: "hard" }
       ]
     }
@@ -489,6 +496,7 @@
             <span class="q-index">${String(i + 1).padStart(2, '0')}</span>
             <div class="q-body">
               <div class="q-text">${item.q}</div>
+              ${item.img ? `<img class="q-image" src="${item.img}" alt="question diagram">` : ''}
               <div class="q-meta"><span class="tag tag-${item.difficulty}">${item.difficulty}</span></div>
               <div class="q-answer"><div class="q-answer-inner"><span class="label">SOLUTION</span>${item.a}</div></div>
             </div>
@@ -504,6 +512,15 @@
 
     if (totalShown === 0) {
       main.innerHTML = '<div class="empty-state">No questions match your search.</div>';
+    }
+
+    if (window.renderMathInElement) {
+      renderMathInElement(main, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ]
+      });
     }
   }
 
@@ -528,7 +545,8 @@
     });
   });
 
-  render();
+  window.addEventListener('DOMContentLoaded', render);
+  if (document.readyState !== 'loading') render();
 </script>
 
 </body>
