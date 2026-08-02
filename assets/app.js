@@ -284,3 +284,35 @@ function initLandingPage() {
     });
   });
 }
+
+// ============================================================
+// CUSTOM CURSOR GLOW
+// Call initCursorGlow() from every page's inline script.
+// Skips itself automatically on touch devices.
+// ============================================================
+function initCursorGlow() {
+  if (!window.matchMedia('(pointer: fine)').matches) return;
+
+  const dot = document.createElement('div');
+  dot.className = 'cursor-glow';
+  document.body.appendChild(dot);
+
+  let x = 0, y = 0;
+  document.addEventListener('mousemove', (e) => {
+    x = e.clientX;
+    y = e.clientY;
+    dot.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
+    dot.classList.add('visible');
+  });
+
+  document.addEventListener('mouseleave', () => dot.classList.remove('visible'));
+  document.addEventListener('mouseenter', () => dot.classList.add('visible'));
+
+  const hoverTargets = 'a, button, .q-item, .topic-card, .pill, input';
+  document.addEventListener('mouseover', (e) => {
+    if (e.target.closest(hoverTargets)) dot.classList.add('cursor-hover');
+  });
+  document.addEventListener('mouseout', (e) => {
+    if (e.target.closest(hoverTargets)) dot.classList.remove('cursor-hover');
+  });
+}
