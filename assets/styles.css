@@ -89,6 +89,20 @@ nav {
 .nav-links a { text-decoration: none; transition: color 0.15s; }
 .nav-links a:hover, .nav-links a.active { color: var(--text); }
 
+.nav-quote {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(-3deg);
+  font-family: 'Dancing Script', cursive;
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--text);
+  opacity: 0.28;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
 .menu-toggle {
   display: none;
   background: none;
@@ -515,9 +529,14 @@ footer {
   letter-spacing: 0.01em;
 }
 
+@media (max-width: 900px) and (min-width: 641px) {
+  .nav-quote { display: none; }
+}
+
 @media (max-width: 640px) {
   nav { padding: 14px 18px; flex-wrap: wrap; }
   .menu-toggle { display: block; }
+  .nav-quote { display: none; }
   .nav-links {
     display: none;
     width: 100%;
