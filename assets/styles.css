@@ -89,6 +89,16 @@ nav {
 .nav-links a { text-decoration: none; transition: color 0.15s; }
 .nav-links a:hover, .nav-links a.active { color: var(--text); }
 
+.menu-toggle {
+  display: none;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px;
+  color: var(--text);
+  cursor: pointer;
+}
+
 /* ---------- HERO ---------- */
 .hero {
   position: relative;
@@ -326,7 +336,10 @@ main { max-width: 1040px; margin: 0 auto; padding: 8px 32px 100px; }
   flex-shrink: 0;
 }
 .q-body { flex: 1; }
-.q-text { font-size: 15px; font-weight: 500; line-height: 1.55; }
+.q-body, .q-answer-inner { min-width: 0; } /* allows children to shrink/scroll instead of overflowing */
+.q-text { font-size: 15px; font-weight: 500; line-height: 1.55; overflow-x: auto; }
+.katex-display { overflow-x: auto; overflow-y: hidden; padding-bottom: 4px; }
+.katex { white-space: normal; }
 .q-image {
   max-width: 100%;
   max-height: 260px;
@@ -493,14 +506,38 @@ footer {
   color: var(--text-faint);
   font-family: var(--mono);
 }
+.credit {
+  margin-top: 10px;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  opacity: 0.35;
+  letter-spacing: 0.01em;
+}
 
 @media (max-width: 640px) {
-  nav { padding: 14px 18px; }
-  .nav-links { display: none; }
+  nav { padding: 14px 18px; flex-wrap: wrap; }
+  .menu-toggle { display: block; }
+  .nav-links {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    gap: 0;
+    order: 3;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+  .nav-links.open { display: flex; }
+  .nav-links a { padding: 10px 4px; font-size: 14px; }
   .hero { padding: 56px 18px 40px; }
   .controls { padding: 0 18px 24px; }
   main { padding: 8px 18px 80px; }
   .topic-grid { padding: 8px 18px 80px; }
   .hero-stats { gap: 28px; }
   .q-answer-inner { margin-left: 0; }
+  .q-row { gap: 10px; }
+  .q-index { width: 20px; font-size: 11px; }
+  h1 { letter-spacing: -0.02em; }
+  .search-box input { font-size: 16px; }
 }
