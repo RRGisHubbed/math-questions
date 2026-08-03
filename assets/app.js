@@ -316,3 +316,14 @@ function initCursorGlow() {
     if (e.target.closest(hoverTargets)) dot.classList.remove('cursor-hover');
   });
 }
+
+// ============================================================
+// MOBILE NAV MENU TOGGLE
+// Call initMobileMenu() from every page's inline script.
+// ============================================================
+function initMobileMenu() {
+  const btn = document.getElementById('menuToggle');
+  const links = document.querySelector('.nav-links');
+  if (!btn || !links) return;
+  btn.addEventListener('click', () => links.classList.toggle('open'));
+}
