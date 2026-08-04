@@ -528,6 +528,23 @@ footer {
   opacity: 0.35;
   letter-spacing: 0.01em;
 }
+.social-links {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+}
+.social-link {
+  color: var(--text-faint);
+  display: inline-flex;
+  padding: 8px;
+  border-radius: 8px;
+  transition: color 0.15s, background 0.15s, transform 0.15s;
+}
+.social-link:hover {
+  color: var(--accent-nt);
+  background: rgba(108,143,255,0.08);
+  transform: translateY(-1px);
+}
 
 @media (max-width: 900px) and (min-width: 641px) {
   .nav-quote { display: none; }
